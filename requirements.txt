@@ -1,6 +1,0 @@
-Flask
-Werkzeug
-Pillow
-mutagen
-opencv-python-headless
-gunicorn
