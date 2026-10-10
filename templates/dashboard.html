@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h2>🛡️ Cybersecurity Command Dashboard</h2>
+
+<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+    <div class="card" style="flex: 1; text-align: center; min-width: 120px;">
+        <h3 style="margin: 0; color: var(--text-muted);">Total Scans</h3>
+        <p style="font-size: 2rem; font-weight: bold; margin: 0.5rem 0 0;">{{ total }}</p>
+    </div>
+    <div class="card" style="flex: 1; text-align: center; min-width: 120px;">
+        <h3 style="margin: 0; color: var(--accent-red);">High/Critical</h3>
+        <p style="font-size: 2rem; font-weight: bold; margin: 0.5rem 0 0;">{{ critical }}</p>
+    </div>
+    <div class="card" style="flex: 1; text-align: center; min-width: 100px;">
+        <h3 style="margin: 0; color: var(--accent-blue);">Phishing</h3>
+        <p style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0 0;">{{ phishing }}</p>
+    </div>
+    <div class="card" style="flex: 1; text-align: center; min-width: 100px;">
+        <h3 style="margin: 0; color: var(--accent-yellow);">Calls</h3>
+        <p style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0 0;">{{ impersonation }}</p>
+    </div>
+    <div class="card" style="flex: 1; text-align: center; min-width: 100px;">
+        <h3 style="margin: 0; color: var(--accent-green);">Images</h3>
+        <p style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0 0;">{{ image }}</p>
+    </div>
+    <div class="card" style="flex: 1; text-align: center; min-width: 100px;">
+        <h3 style="margin: 0; color: var(--accent-purple);">Audio</h3>
+        <p style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0 0;">{{ audio }}</p>
+    </div>
+    <div class="card" style="flex: 1; text-align: center; min-width: 100px;">
+        <h3 style="margin: 0; color: var(--accent-cyan);">Video</h3>
+        <p style="font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0 0;">{{ video }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>📊 Threat Vector Distribution Chart</h3>
+    <div style="max-height: 300px;">
+        <canvas id="threatChart"></canvas>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Recent Threat Detections & Responses</h3>
+    {% if logs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Scenario</th>
+                    <th>Risk Level</th>
+                    <th>Score</th>
+                    <th>Explainable AI Reasoning</th>
+                    <th>Recommended Response</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.timestamp }}</td>
+                    <td>{{ log.scenario_type }}</td>
+                    <td><span class="badge badge-{{ log.risk_level }}">{{ log.risk_level }}</span></td>
+                    <td>{{ log.risk_score }}/100</td>
+                    <td>{{ log.explanation }}</td>
+                    <td>{{ log.recommended_action }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: var(--text-muted);">No threat analysis events logged yet. Use the modules above to run scans.</p>
+    {% endif %}
+</div>
+
+<script>
+    const ctx = document.getElementById('threatChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Phishing', 'Call Impersonation', 'Account Takeover', 'Images', 'Audio Deepfakes', 'Video Deepfakes'],
+            datasets: [{
+                label: 'Threat Count',
+                data: [{{ phishing }}, {{ impersonation }}, {{ ato }}, {{ image }}, {{ audio }}, {{ video }}],
+                backgroundColor: ['#38bdf8', '#f59e0b', '#ef4444', '#10b981', '#a855f7', '#06b6d4'],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#9ca3af' } },
+                x: { ticks: { color: '#9ca3af' } }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+</script>
+{% endblock %}

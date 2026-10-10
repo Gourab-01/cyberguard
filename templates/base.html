@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERGUARD - Threat Detection Platform</title>
+    <style>
+        :root {
+            --bg-color: #121417;
+            --card-bg: #1a1d24;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #38bdf8;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #2a2e39;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--text-main); letter-spacing: 1px; }
+        .logo span { color: var(--accent-green); }
+
+        nav a { color: var(--text-muted); text-decoration: none; margin-left: 1.2rem; font-weight: 500; }
+        nav a:hover { color: var(--accent-green); }
+
+        .container { max-width: 1050px; margin: 2rem auto; padding: 0 1rem; width: 100%; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+        input[type="text"], input[type="email"], input[type="password"], textarea, select, input[type="number"], input[type="file"] {
+            width: 100%; padding: 0.75rem; background-color: var(--bg-color); border: 1px solid var(--border-color);
+            border-radius: 6px; color: var(--text-main); box-sizing: border-box; font-size: 1rem;
+        }
+
+        .btn { width: 100%; padding: 0.75rem; background-color: var(--accent-green); border: none; border-radius: 6px; color: #121417; font-weight: 700; cursor: pointer; }
+        .btn:hover { opacity: 0.9; }
+
+        .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
+        .badge-Safe { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .badge-Medium { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); }
+        .badge-High, .badge-Critical { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+        .flash-messages { margin-bottom: 1rem; }
+        .flash { padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .flash.success { background-color: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .flash.danger { background-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .flash.info { background-color: rgba(56, 189, 248, 0.2); color: var(--accent-blue); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        th { background-color: var(--bg-color); color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">CYBER<span>GUARD</span></div>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('phishing') }}">Phishing</a>
+            <a href="{{ url_for('impersonation') }}">Calls</a>
+            <a href="{{ url_for('account_takeover') }}">Account Takeover</a>
+            <a href="{{ url_for('image_detector') }}">Images</a>
+            <a href="{{ url_for('audio_detector') }}">Audio</a>
+            <a href="{{ url_for('video_detector') }}">Video Deepfakes</a>
+            {% if session.get('user_id') %}
+                <a href="#">User: {{ session.username }}</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>🎥 Video Deepfake & Manipulated Stream Detector</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+        Upload a video recording (.mp4, .avi, .mov) to inspect for AI temporal frame variance drops, low FPS interpolation, and generative canvas anomalies using OpenCV frame sampling.
+    </p>
+
+    <form action="{{ url_for('video_detector') }}" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="video">Select Video File</label>
+            <input type="file" id="video" name="video" accept="video/*" required>
+        </div>
+        <button type="submit" class="btn">Analyze Video Recording</button>
+    </form>
+
+    {% if result %}
+        <div style="margin-top: 1.5rem; padding: 1rem; border-radius: 6px; background: var(--bg-color); border: 1px solid var(--border-color);">
+            <h3>Analysis Output</h3>
+            <p><strong>Risk Level:</strong> <span class="badge badge-{{ result.level }}">{{ result.level }}</span> (Score: {{ result.score }}/100)</p>
+            <p><strong>Explainable AI Assessment:</strong> {{ result.explanation }}</p>
+            <p><strong>Recommended Action:</strong> {{ result.action }}</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
